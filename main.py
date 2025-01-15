@@ -15,13 +15,23 @@ def upload_and_merge_excel():
         return merged_df
     return None
 
-# Function to edit data manually (simple example using text input)
+# Function to edit data manually (edit rows and delete columns)
 def edit_data(df):
-    edited_df = df.copy()
-    for i in range(len(df)):
-        for col in df.columns:
-            edited_df.at[i, col] = st.text_input(f"Edit {col} (row {i+1})", value=str(df.at[i, col]), key=f"{col}_{i}")
-    return edited_df
+    # Delete columns feature
+    columns_to_delete = st.multiselect("Select columns to delete", df.columns)
+    edited_df = df.drop(columns=columns_to_delete, errors='ignore')
+
+    # Edit rows feature
+    st.write("Edit rows:")
+    edited_df_copy = edited_df.copy()
+    
+    # Loop through each row and allow user input for each column in the row
+    for i in range(len(edited_df)):
+        st.write(f"Row {i + 1}:")
+        for col in edited_df.columns:
+            edited_df_copy.at[i, col] = st.text_input(f"Edit {col} (Row {i + 1})", value=str(edited_df.at[i, col]), key=f"{col}_{i}")
+    
+    return edited_df_copy
 
 # Main Streamlit App
 def main():
